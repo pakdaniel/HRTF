@@ -12,7 +12,7 @@ def plot_time_series(t_range, x, width=15, height=5, font_size=14, line_width=2,
         plotfunc = plt.semilogy
 
     plt.figure(figsize = (width, height))
-    h = plotfunc(t_range, x, linewidth = line_width)
+    h = plotfunc(np.atleast_2d(t_range).T, np.atleast_2d(x).T, linewidth = line_width)
     plt.title(title, {"fontsize": font_size})
 
     plt.xlabel('Time (s)', fontsize=font_size)
@@ -36,7 +36,7 @@ def plot_linear_spectrum_amplitude(f_range, X, width=15, height=5, font_size=14,
     elif plot_type == "semilogy":
         plotfunc = plt.semilogy
 
-    X_amp = abs(X)
+    X_amp = np.atleast_2d(abs(X))
 
     if units == "dB":
         X_amp = acousticmag2db(X_amp/max(X_amp))
@@ -45,7 +45,7 @@ def plot_linear_spectrum_amplitude(f_range, X, width=15, height=5, font_size=14,
         f_range = 2*np.pi*f_range
 
     plt.figure(figsize = (width, height))
-    h = plotfunc(f_range, X_amp, linewidth = line_width)
+    h = plotfunc(np.atleast_2d(f_range).T, X_amp.T, linewidth = line_width)
 
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Absolute Amplitude ({})'.format(units), fontsize=font_size)
