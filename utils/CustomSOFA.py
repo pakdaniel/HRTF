@@ -4,7 +4,7 @@ class SOFA:
     def __init__(self, obj):
 
         self.IR = obj.getDataIR().data
-        self.SamplingRate = obj.getSamplingRate().data
+        self.SamplingRate = obj.getSamplingRate().data.item()
         self.SamplingRateUnits = obj.getSamplingRateUnits()
         self.Delay = obj.getDataDelay().data
         
