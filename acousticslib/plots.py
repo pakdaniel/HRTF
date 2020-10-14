@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 from .unit_conversions import acousticmag2db
+from .domain_conversions import timeseries2linearspectrum, linearspectrum2timeseries, linearspectrum2powerspectraldensity
 import numpy as np
+from math import floor
 
 DEFAULT_WIDTH = 15
 DEFAULT_HEIGHT = 5
@@ -50,7 +52,7 @@ def plot_linear_spectrum_amplitude(f_range, X, width=DEFAULT_WIDTH, height=DEFAU
 
     plt.figure(figsize = (width, height))
     h = plot(np.atleast_2d(f_range).T, X_amp.T, linewidth = line_width)
-
+    plt.title(title, {"fontsize": font_size})
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Absolute Amplitude ({})'.format(units), fontsize=font_size)
     plt.xlim([f_range[0], f_range[-1]])
@@ -77,7 +79,7 @@ def plot_phase(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size
 
     plt.figure(figsize = (width, height))
     h = plot(np.atleast_2d(f_range).T, np.angle(X_amp).T, linewidth = line_width)
-
+    plt.title(title, {"fontsize": font_size})
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Phase Angle ({})'.format(units), fontsize=font_size)
     plt.xlim([f_range[0], f_range[-1]])
@@ -105,7 +107,7 @@ def plot_linear_spectrum(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT,
 
     plt.figure(figsize = (width, height))
     h = plot(np.atleast_2d(f_range).T, X.T, linewidth = line_width)
-
+    plt.title(title, {"fontsize": font_size})
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Real-valued Amplitude ({})'.format(units), fontsize=font_size)
     plt.xlim([f_range[0], f_range[-1]])
@@ -130,7 +132,7 @@ def plot_gxx(Gxx_f_range, Gxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_
 
     plt.figure(figsize = (width, height))
     h = plot(np.atleast_2d(Gxx_f_range).T, Gxx.T, linewidth = line_width)
-
+    plt.title(title, {"fontsize": font_size})
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Power ({})'.format(units), fontsize=font_size)
     plt.xlim([Gxx_f_range[0], Gxx_f_range[-1]])
@@ -153,8 +155,9 @@ def plot_sxx(f_range, Sxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size
         f_range = 2*np.pi*f_range
 
     plot = _get_plot_func(plot_type)
+    plt.figure(figsize = (width, height))
     h = plot(np.atleast_2d(f_range).T, Sxx.T, linewidth = line_width)
-
+    plt.title(title, {"fontsize": font_size})
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Power ({})'.format(units), fontsize=font_size)
     plt.xlim([f_range[0], f_range[-1]])
@@ -163,5 +166,52 @@ def plot_sxx(f_range, Sxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size
 
     if legend:
         plt.legend(legend, loc=legend_loc)
+
+    return h
+
+def plot_spectrogram(x, dt, record_length = 0, num_bins = 0, percent_overlap = 0,
+    plot_type = "default", title="Spectrograph", convert_to_dB = False,
+    width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE):
+
+    num_samples = len(x)
+    if num_bins and record_length:
+        raise Exception('Cannot specify both number of records and record length')
+    elif record_length:
+        num_bins = floor((num_samples - record_length)/((1 - 0.01*percent_overlap)*record_length) + 1)
+    elif num_bins:
+        record_length = floor(num_samples / (1 + (1 - 0.01*percent_overlap)*(num_bins - 1)))
+
+    spectrogram_matrix = np.zeros((floor(record_length/2)+1, num_bins))
+
+    for i in range(num_bins):
+        start_index = floor((1 - 0.01*percent_overlap)*(record_length)*i)
+        binned_x = x[start_index:start_index+record_length+1]
+        binned_X, _ = timeseries2linearspectrum(binned_x, dt)
+        _, binned_Gxx, binned_Gxx_f_range = linearspectrum2powerspectraldensity(binned_X, dt)
+        if convert_to_dB:
+            binned_Gxx = acousticmag2db(binned_Gxx)
+        spectrogram_matrix[:, i] = binned_Gxx.T.flatten()
+
+    num_samples_used = start_index+record_length+1
+    end_time = num_samples_used*dt
+    t_range = np.linspace(0, end_time, num_bins)
+
+    
+
+    if convert_to_dB:
+        units = 'dB'
+    else:
+        units = 'wu$^2$/Hz'
+    fig = plt.figure(figsize = (width, height))
+    h = plt.imshow(spectrogram_matrix, cmap="jet", origin="lower")
+    plt.title("{} ({} records, {} samples/record), {}% Overlap".format(title, num_bins, record_length, percent_overlap), {"fontsize": font_size})
+    cbar = fig.colorbar(h)
+    cbar.set_label("Magnitude ({})".format(units))
+    cbar.ax.tick_params(labelsize=font_size)
+    plt.xticks(fontsize = font_size)
+    # also add 0:end of t range for x ticks
+    
+    plt.xlabel('Time (s)', fontsize=font_size)
+    plt.ylabel('Frequency (Hz)', fontsize=font_size)
 
     return h
