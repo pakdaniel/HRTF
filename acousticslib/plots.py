@@ -3,6 +3,7 @@ from .unit_conversions import acousticmag2db
 from .domain_conversions import timeseries2linearspectrum, linearspectrum2timeseries, linearspectrum2powerspectraldensity
 import numpy as np
 from math import floor
+from matplotlib.ticker import FuncFormatter
 
 DEFAULT_WIDTH = 15
 DEFAULT_HEIGHT = 5
@@ -171,7 +172,7 @@ def plot_sxx(f_range, Sxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size
 
 def plot_spectrogram(x, dt, record_length = 0, num_bins = 0, percent_overlap = 0,
     plot_type = "default", title="Spectrograph", convert_to_dB = False,
-    width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE):
+    width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE, num_xticks = 10):
 
     num_samples = len(x)
     if num_bins and record_length:
@@ -203,13 +204,15 @@ def plot_spectrogram(x, dt, record_length = 0, num_bins = 0, percent_overlap = 0
     else:
         units = 'wu$^2$/Hz'
     fig = plt.figure(figsize = (width, height))
-    h = plt.imshow(spectrogram_matrix, cmap="jet", origin="lower")
+    h = plt.imshow(spectrogram_matrix, cmap="jet", origin="lower", extent=[0, end_time, 0, binned_Gxx_f_range[-1]], aspect="auto")
     plt.title("{} ({} records, {} samples/record), {}% Overlap".format(title, num_bins, record_length, percent_overlap), {"fontsize": font_size})
     cbar = fig.colorbar(h)
     cbar.set_label("Magnitude ({})".format(units))
     cbar.ax.tick_params(labelsize=font_size)
     plt.xticks(fontsize = font_size)
+    
     # also add 0:end of t range for x ticks
+    # plt.gca().get_xaxis().set_major_formatter(FuncFormatter(lambda x, p: format((x*dt), ',')))
     
     plt.xlabel('Time (s)', fontsize=font_size)
     plt.ylabel('Frequency (Hz)', fontsize=font_size)
