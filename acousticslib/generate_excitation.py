@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.matlib import repmat
 from acousticslib.sweeps import lin_sine_sweep, log_sine_sweep
 from math import ceil
 from acousticslib.domain_conversions import linearspectrum2timeseries
@@ -10,6 +11,7 @@ def generate_excitation(record_length, pulse_time, num_records, excitation_type,
 
     # Set random seed for reproducibility and debugging
     np.random.seed(31415)
+    record_length = int(record_length)
 
     f2 = SweepFrequencyHigh
     f1 = SweepFrequencyLow
@@ -17,7 +19,7 @@ def generate_excitation(record_length, pulse_time, num_records, excitation_type,
     dt = 1/sampling_frequency
 
     t_range = np.arange((record_length*num_records))*dt
-    pulse_length = sampling_frequency * pulse_time
+    pulse_length = int(sampling_frequency * pulse_time)
 
     if excitation_type =='impulse':
         
@@ -30,7 +32,7 @@ def generate_excitation(record_length, pulse_time, num_records, excitation_type,
         if not sine_freq:
             sine_freq = 1/pulse_time 
         
-        pulse_t_range = np.linspace(0, pulse_time, pulse_length)
+        pulse_t_range = np.linspace(0, pulse_time, int(pulse_length))
         pulse = np.sin(2*np.pi*sine_freq * pulse_t_range)
 
     elif excitation_type == 'lin_sine_sweep':
@@ -64,6 +66,6 @@ def generate_excitation(record_length, pulse_time, num_records, excitation_type,
 
         pulse, _ = linearspectrum2timeseries(X, dt)    
        
-    single_record = np.concatenate((pulse, np.zeros(1, record_length - pulse_length)), axis=1)
-    excitation = np.matlib.repmat(single_record, 1, num_records)
+    single_record = np.concatenate((pulse, np.zeros((record_length - pulse_length))))
+    excitation = repmat(single_record, 1, num_records)
     return excitation, t_range
