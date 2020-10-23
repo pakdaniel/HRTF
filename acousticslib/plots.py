@@ -175,25 +175,36 @@ def plot_spectrogram(x, dt, record_length = 0, num_bins = 0, percent_overlap = 0
     width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE, num_xticks = 10):
 
     num_samples = len(x)
+    if not num_bins and record_length <= 1:
+        raise Exception('Record length must be an integer 2 or greater')
     if num_bins and record_length:
         raise Exception('Cannot specify both number of records and record length')
     elif record_length:
         num_bins = floor((num_samples - record_length)/((1 - 0.01*percent_overlap)*record_length) + 1)
     elif num_bins:
         record_length = floor(num_samples / (1 + (1 - 0.01*percent_overlap)*(num_bins - 1)))
+    
+    if record_length <= 1:
+        raise Exception("Computed record length of {} must be an integer 2 or greater; please use fewer bins".format(record_length))
 
-    spectrogram_matrix = np.zeros((floor(record_length/2)+1, num_bins))
-
+    spectrogram_matrix = np.zeros(( floor(record_length/2 + 1),
+        # if record_length is 2, X is 2, Gxx is 2
+        # if record_length is 3, Gxx is 2
+        # if record_length is 4, Gxx is 3
+        # if record_length is 5, Gxx is 3
+        num_bins))
+    
     for i in range(num_bins):
         start_index = floor((1 - 0.01*percent_overlap)*(record_length)*i)
-        binned_x = x[start_index:start_index+record_length+1]
+        binned_x = x[start_index:start_index+record_length]
         binned_X, _ = timeseries2linearspectrum(binned_x, dt)
         _, binned_Gxx, binned_Gxx_f_range = linearspectrum2powerspectraldensity(binned_X, dt)
         if convert_to_dB:
             binned_Gxx = acousticmag2db(binned_Gxx)
+        
         spectrogram_matrix[:, i] = binned_Gxx.T.flatten()
 
-    num_samples_used = start_index+record_length+1
+    num_samples_used = num_bins*record_length
     end_time = num_samples_used*dt
     t_range = np.linspace(0, end_time, num_bins)
 

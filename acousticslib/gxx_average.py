@@ -23,7 +23,7 @@ def gxx_average(x, dt, num_bins):
     for jj in range(num_bins):
         binned_x = x[truncated_length*jj: truncated_length*(jj+1)]
         binned_X, _ = timeseries2linearspectrum(binned_x, dt)
-        linear_avged_X = linear_avged_X + binned_X.T
+        linear_avged_X = linear_avged_X + binned_X
     linear_avged_X = linear_avged_X / num_bins
     _, linear_avged_gxx, _ = linearspectrum2powerspectraldensity(linear_avged_X, dt)
 

@@ -1,1 +1,2 @@
 from acousticslib.parseval_sum_check import parseval_sum_check
+from acousticslib.gxx_average import gxx_average

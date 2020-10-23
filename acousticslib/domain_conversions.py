@@ -46,6 +46,7 @@ def linearspectrum2powerspectraldensity(X, dt):
     shifted_frequency_range = f_range - (ceil(N/2) - 1)*df
 
     zero_index = floor((N+1)/2) - 1
+    # Size of Gxx is N - (floor(N+1)/2) + 1
     Gxx = np.zeros((1, N-(zero_index)))
     Gxx[0, 0] = Sxx[0, zero_index]
     Gxx[0, 1:N-(zero_index)] = 2*Sxx[0, zero_index+1:]
