@@ -66,7 +66,6 @@ class SOFA:
         beta = np.arcsin(z / np.where(r != 0, r, 1))
         return alpha, beta, r
 
-    @staticmethod    
     def split_HRIR_by_location(self, azimuth, elevation):
         outputs = self.IR[np.all(self.Source["Position"][:, :2] == np.array([azimuth, elevation]), axis=1)], self.IR[np.any(self.Source["Position"][:, :2] != np.array([azimuth, elevation]), axis=1)]
         if len(outputs[0]) == 0:
