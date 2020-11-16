@@ -68,7 +68,7 @@ class SOFA:
 
     
     def split_HRIR_by_location(self, azimuth, elevation):
-        outputs = self.IR[np.all(self.Source["Position"][:, :2] == np.array([0, 0]), axis=1)], self.IR[np.any(self.Source["Position"][:, :2] != np.array([0, 0]), axis=1)]
+        outputs = self.IR[np.all(self.Source["Position"][:, :2] == np.array([azimuth, elevation]), axis=1)], self.IR[np.any(self.Source["Position"][:, :2] != np.array([azimuth, elevation]), axis=1)]
         if len(outputs[0]) == 0:
             raise ValueError("The given (azimuth, elevation) angle pair does not exist in the HRIR")
         return outputs
