@@ -1,4 +1,5 @@
 import numpy as np
+from warnings import warn
 
 class SOFA:
     def __init__(self, obj):
@@ -77,5 +78,7 @@ class SOFA:
         conditions = np.logical_or.reduce([np.all(self.Source["Position"][:, :2] == np.array([location[0], location[1]]), axis=1) for location in locations])
         if not any(conditions):
             raise Exception("None of the angle pairs passed in exist in the dataset")
+        if sum(conditions) != len(locations):
+            warn("One or more of the angle pairs passed in does not exist in the dataset; the size of the split will be smaller than the number of locations passed in.")
         outputs = self.IR[conditions], self.IR[~conditions]
         return outputs
