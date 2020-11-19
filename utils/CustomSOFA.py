@@ -82,3 +82,6 @@ class SOFA:
             warn("One or more of the angle pairs passed in does not exist in the dataset; the size of the split will be smaller than the number of locations passed in.")
         outputs = self.IR[conditions], self.IR[~conditions]
         return outputs
+
+    def get_indices_of_locations(self, locations):
+        return np.where(np.logical_or.reduce([np.all(self.Source["Position"][:, :2] == np.array([location[0], location[1]]), axis=1) for location in locations]) == True)[0]
