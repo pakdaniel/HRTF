@@ -75,7 +75,7 @@ class SOFA:
 
     def split_HRIR_by_locations(self, locations):
 
-        conditions = np.logical_or.reduce([np.all(self.Source["Position"][:, :2] == np.array([location[0], location[1]]), axis=1) for location in locations])
+        conditions = np.logical_or.reduce([np.all(self.Source["Position"][:, :2] == np.array([azimuth, elevation]), axis=1) for azimuth, elevation in locations])
         if not any(conditions):
             raise Exception("None of the angle pairs passed in exist in the dataset")
         if sum(conditions) != len(locations):
@@ -84,4 +84,4 @@ class SOFA:
         return outputs
 
     def get_indices_of_locations(self, locations):
-        return np.where(np.logical_or.reduce([np.all(self.Source["Position"][:, :2] == np.array([location[0], location[1]]), axis=1) for location in locations]) == True)[0]
+        return np.where(np.logical_or.reduce([np.all(self.Source["Position"][:, :2] == np.array([azimuth, elevation]), axis=1) for azimuth, elevation in locations]) == True)[0]
