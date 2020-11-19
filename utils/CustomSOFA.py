@@ -71,3 +71,11 @@ class SOFA:
         if len(outputs[0]) == 0:
             raise ValueError("The given (azimuth, elevation) angle pair does not exist in the HRIR")
         return outputs
+
+    def split_HRIR_by_locations(self, locations):
+
+        conditions = np.logical_or.reduce([np.all(self.Source["Position"][:, :2] == np.array([location[0], location[1]]), axis=1) for location in locations])
+        if any(np.any(condition) for condition in conditions):
+            raise Exception("One or more of the angle pairs passed in does not exist in the dataset")
+        outputs = self.IR[conditions], self.IR[~conditions]
+        return outputs
