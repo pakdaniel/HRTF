@@ -9,7 +9,7 @@ def timeseries2linearspectrum(x, dt):
 
     X = np.fft.fft(x)*dt
     shift_amount = ceil(N/2) - 1
-    linear_spectrum = np.roll(X, shift_amount)
+    linear_spectrum = np.roll(X, shift_amount, axis=1)
 
     df = 1/(N*dt)
     f_range = np.arange(N)*df
@@ -24,7 +24,7 @@ def linearspectrum2timeseries(X, dt):
     N = X.shape[1]
 
     shift_amount = 1 - ceil(N/2)
-    X = np.roll(X, shift_amount)
+    X = np.roll(X, shift_amount, axis=1)
     time_series = np.fft.ifft(X)/dt
     t_range = np.arange(N)*dt
     return time_series, t_range
