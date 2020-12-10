@@ -19,7 +19,7 @@ def _get_plot_func(plot_type):
         plotfunc = plt.semilogy
     return plotfunc
 
-def plot_time_series(t_range, x, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH, units="wu", plot_type="default", title="Time-series data", legend=[], legend_loc = "northeast"):
+def plot_time_series(t_range, x, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH, units="wu", plot_type="default", title="Time-series data", legend=[], legend_loc = "upper right"):
 
     plot = _get_plot_func(plot_type)
 
@@ -39,7 +39,7 @@ def plot_time_series(t_range, x, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, fon
     return h
 
 def plot_linear_spectrum_amplitude(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH,
-    x_units = "Hz", units="wu/Hz", plot_type="default", title="Linear spectrum (absolute magnitude)", legend=[], legend_loc = "northeast"):
+    x_units = "Hz", units="wu/Hz", plot_type="default", title="Linear spectrum (absolute magnitude)", legend=[], legend_loc = "upper right"):
 
     plot = _get_plot_func(plot_type)
 
@@ -66,7 +66,7 @@ def plot_linear_spectrum_amplitude(f_range, X, width=DEFAULT_WIDTH, height=DEFAU
     return h
 
 def plot_phase(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH,
-    x_units = "Hz", units="rad", plot_type="default", title="Phase angle vs Frequency", legend=[], legend_loc = "northeast"):
+    x_units = "Hz", units="rad", plot_type="default", title="Phase angle vs Frequency", legend=[], legend_loc = "upper right"):
 
     plot = _get_plot_func(plot_type)
 
@@ -94,7 +94,7 @@ def plot_phase(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size
 
 def plot_linear_spectrum(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE,
     line_width=DEFAULT_LINEWIDTH, x_units = "Hz", units="wu/Hz", plot_type="default",
-    title="Real-valued linear spectrum", legend=[], legend_loc = "northeast"):
+    title="Real-valued linear spectrum", legend=[], legend_loc = "upper right"):
 
     plot = _get_plot_func(plot_type)
 
@@ -122,7 +122,7 @@ def plot_linear_spectrum(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT,
 
 def plot_gxx(Gxx_f_range, Gxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE,
     line_width=DEFAULT_LINEWIDTH, x_units = "Hz", units="wu$^2$/Hz", plot_type="default",
-    title="One-sided power spectral density", legend=[], legend_loc = "northeast"):
+    title="One-sided power spectral density", legend=[], legend_loc = "upper right"):
 
     plot = _get_plot_func(plot_type)
 
@@ -148,7 +148,7 @@ def plot_gxx(Gxx_f_range, Gxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_
 
 def plot_sxx(f_range, Sxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE,
     line_width=DEFAULT_LINEWIDTH, x_units = "Hz", units="wu$^2$/Hz", plot_type="default",
-    title="Two-sided power spectral density", legend=[], legend_loc = "northeast"):
+    title="Two-sided power spectral density", legend=[], legend_loc = "upper right"):
 
     Sxx = np.atleast_2d(Sxx)
 
