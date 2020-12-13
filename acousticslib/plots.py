@@ -94,6 +94,7 @@ def plot_phase(f_range, X, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE,
 
     if units == "deg":
         y = np.angle(X_amp, deg=True)
+        units = "$^{\circ}$"
     else:
         y = np.angle(X_amp)
 
@@ -101,6 +102,7 @@ def plot_phase(f_range, X, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE,
         f_range = 2*np.pi*f_range
     elif x_units == 'deg/sec':
         f_range = 360*f_range
+        x_units = "$^{\circ}$/sec"
 
 
     plot(np.atleast_2d(f_range).T, y.T, linewidth = line_width)
