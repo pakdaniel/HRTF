@@ -9,22 +9,29 @@ DEFAULT_WIDTH = 15
 DEFAULT_HEIGHT = 5
 DEFAULT_FONTSIZE = 14
 DEFAULT_LINEWIDTH = 2
+DEFAULT_FIGSIZE = (DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
-def _get_plot_func(plot_type):
+def _get_plot_func(plot_type, ax):
     if plot_type == "default":
-        plotfunc = plt.plot
+        plotfunc = ax.plot
     elif plot_type == "semilogx":
-        plotfunc = plt.semilogx
+        plotfunc = ax.semilogx
     elif plot_type == "semilogy":
-        plotfunc = plt.semilogy
+        plotfunc = ax.semilogy
+    else:
+        raise NotImplementedError
     return plotfunc
 
-def plot_time_series(t_range, x, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH, units="wu", plot_type="default", title="Time-series data", legend=[], legend_loc = "upper right"):
+def plot_time_series(t_range, x, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH, units="wu", plot_type="default", title="Time-series data", legend=[], legend_loc = "upper right"):
 
-    plot = _get_plot_func(plot_type)
+    if usefig and not ax:
+        fig, ax = plt.subplots(figsize=figsize)
+    elif not ax:
+        ax = plt.gca()
+    plot = _get_plot_func(plot_type, ax)
 
-    plt.figure(figsize = (width, height))
-    h = plot(np.atleast_2d(t_range).T, np.atleast_2d(x).T, linewidth = line_width)
+    
+    plot(np.atleast_2d(t_range).T, np.atleast_2d(x).T, linewidth = line_width)
     plt.title(title, {"fontsize": font_size})
 
     plt.xlabel('Time (s)', fontsize=font_size)
@@ -36,12 +43,16 @@ def plot_time_series(t_range, x, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, fon
     if legend:
         plt.legend(legend, loc=legend_loc)
 
-    return h
+    return ax
 
-def plot_linear_spectrum_amplitude(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH,
+def plot_linear_spectrum_amplitude(f_range, X, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH,
     x_units = "Hz", units="wu/Hz", plot_type="default", title="Linear spectrum (absolute magnitude)", legend=[], legend_loc = "upper right"):
 
-    plot = _get_plot_func(plot_type)
+    if usefig and not ax:
+        fig, ax = plt.subplots(figsize=figsize)
+    elif not ax:
+        ax = plt.gca()
+    plot = _get_plot_func(plot_type, ax)
 
     X_amp = np.atleast_2d(abs(X))
 
@@ -51,8 +62,7 @@ def plot_linear_spectrum_amplitude(f_range, X, width=DEFAULT_WIDTH, height=DEFAU
     if x_units == 'rad/sec':
         f_range = 2*np.pi*f_range
 
-    plt.figure(figsize = (width, height))
-    h = plot(np.atleast_2d(f_range).T, X_amp.T, linewidth = line_width)
+    plot(np.atleast_2d(f_range).T, X_amp.T, linewidth = line_width)
     plt.title(title, {"fontsize": font_size})
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Absolute Amplitude ({})'.format(units), fontsize=font_size)
@@ -63,12 +73,16 @@ def plot_linear_spectrum_amplitude(f_range, X, width=DEFAULT_WIDTH, height=DEFAU
     if legend:
         plt.legend(legend, loc=legend_loc)
 
-    return h
+    return ax
 
-def plot_phase(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH,
+def plot_phase(f_range, X, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH,
     x_units = "Hz", units="rad", plot_type="default", title="Phase angle vs Frequency", legend=[], legend_loc = "upper right"):
 
-    plot = _get_plot_func(plot_type)
+    if usefig and not ax:
+        fig, ax = plt.subplots(figsize=figsize)
+    elif not ax:
+        ax = plt.gca()
+    plot = _get_plot_func(plot_type, ax)
 
     X_amp = np.atleast_2d(X)
 
@@ -78,8 +92,8 @@ def plot_phase(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size
     if x_units == 'rad/sec':
         f_range = 2*np.pi*f_range
 
-    plt.figure(figsize = (width, height))
-    h = plot(np.atleast_2d(f_range).T, np.angle(X_amp).T, linewidth = line_width)
+
+    plot(np.atleast_2d(f_range).T, np.angle(X_amp).T, linewidth = line_width)
     plt.title(title, {"fontsize": font_size})
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Phase Angle ({})'.format(units), fontsize=font_size)
@@ -90,13 +104,17 @@ def plot_phase(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size
     if legend:
         plt.legend(legend, loc=legend_loc)
 
-    return h
+    return ax
 
-def plot_linear_spectrum(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE,
+def plot_linear_spectrum(f_range, X, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE, font_size=DEFAULT_FONTSIZE,
     line_width=DEFAULT_LINEWIDTH, x_units = "Hz", units="wu/Hz", plot_type="default",
     title="Real-valued linear spectrum", legend=[], legend_loc = "upper right"):
 
-    plot = _get_plot_func(plot_type)
+    if usefig and not ax:
+        fig, ax = plt.subplots(figsize=figsize)
+    elif not ax:
+        ax = plt.gca()
+    plot = _get_plot_func(plot_type, ax)
 
     X = np.atleast_2d(X)
 
@@ -106,8 +124,8 @@ def plot_linear_spectrum(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT,
     if x_units == 'rad/sec':
         f_range = 2*np.pi*f_range
 
-    plt.figure(figsize = (width, height))
-    h = plot(np.atleast_2d(f_range).T, X.T, linewidth = line_width)
+    
+    plot(np.atleast_2d(f_range).T, X.T, linewidth = line_width)
     plt.title(title, {"fontsize": font_size})
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Real-valued Amplitude ({})'.format(units), fontsize=font_size)
@@ -118,21 +136,25 @@ def plot_linear_spectrum(f_range, X, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT,
     if legend:
         plt.legend(legend, loc=legend_loc)
 
-    return h
+    return ax
 
-def plot_gxx(Gxx_f_range, Gxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE,
+def plot_gxx(Gxx_f_range, Gxx, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE, font_size=DEFAULT_FONTSIZE,
     line_width=DEFAULT_LINEWIDTH, x_units = "Hz", units="wu$^2$/Hz", plot_type="default",
     title="One-sided power spectral density", legend=[], legend_loc = "upper right"):
 
-    plot = _get_plot_func(plot_type)
+    if usefig and not ax:
+        fig, ax = plt.subplots(figsize=figsize)
+    elif not ax:
+        ax = plt.gca()
+    plot = _get_plot_func(plot_type, ax)
 
     Gxx = np.atleast_2d(Gxx)
 
     if x_units == 'rad/sec':
         Gxx_f_range = 2*np.pi*Gxx_f_range
 
-    plt.figure(figsize = (width, height))
-    h = plot(np.atleast_2d(Gxx_f_range).T, Gxx.T, linewidth = line_width)
+    
+    plot(np.atleast_2d(Gxx_f_range).T, Gxx.T, linewidth = line_width)
     plt.title(title, {"fontsize": font_size})
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Power ({})'.format(units), fontsize=font_size)
@@ -143,10 +165,10 @@ def plot_gxx(Gxx_f_range, Gxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_
     if legend:
         plt.legend(legend, loc=legend_loc)
 
-    return h
+    return ax
 
 
-def plot_sxx(f_range, Sxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE,
+def plot_sxx(f_range, Sxx, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE, font_size=DEFAULT_FONTSIZE,
     line_width=DEFAULT_LINEWIDTH, x_units = "Hz", units="wu$^2$/Hz", plot_type="default",
     title="Two-sided power spectral density", legend=[], legend_loc = "upper right"):
 
@@ -155,9 +177,13 @@ def plot_sxx(f_range, Sxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size
     if x_units == 'rad/sec':
         f_range = 2*np.pi*f_range
 
-    plot = _get_plot_func(plot_type)
-    plt.figure(figsize = (width, height))
-    h = plot(np.atleast_2d(f_range).T, Sxx.T, linewidth = line_width)
+    if usefig and not ax:
+        fig, ax = plt.subplots(figsize=figsize)
+    elif not ax:
+        ax = plt.gca()
+    plot = _get_plot_func(plot_type, ax)
+    
+    plot(np.atleast_2d(f_range).T, Sxx.T, linewidth = line_width)
     plt.title(title, {"fontsize": font_size})
     plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     plt.ylabel('Power ({})'.format(units), fontsize=font_size)
@@ -168,11 +194,13 @@ def plot_sxx(f_range, Sxx, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size
     if legend:
         plt.legend(legend, loc=legend_loc)
 
-    return h
+    return ax
 
 def plot_spectrogram(x, dt, record_length = 0, num_bins = 0, percent_overlap = 0,
     plot_type = "default", title="Spectrograph", convert_to_dB = False,
-    width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT, font_size=DEFAULT_FONTSIZE, num_xticks = 10):
+    figsize = DEFAULT_FIGSIZE, font_size=DEFAULT_FONTSIZE, num_xticks = 10):
+    
+    binned_Gxx_f_range = None
 
     num_samples = len(x)
     if not num_bins and record_length <= 1:
@@ -214,7 +242,7 @@ def plot_spectrogram(x, dt, record_length = 0, num_bins = 0, percent_overlap = 0
         units = 'dB'
     else:
         units = 'wu$^2$/Hz'
-    fig = plt.figure(figsize = (width, height))
+    fig = plt.figure(figsize=figsize)
     h = plt.imshow(spectrogram_matrix, cmap="jet", origin="lower", extent=[0, end_time, 0, binned_Gxx_f_range[-1]], aspect="auto")
     plt.title("{} ({} records, {} samples/record), {}% Overlap".format(title, num_bins, record_length, percent_overlap), {"fontsize": font_size})
     cbar = fig.colorbar(h)
