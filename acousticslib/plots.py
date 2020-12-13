@@ -82,7 +82,9 @@ def plot_linear_spectrum_amplitude(f_range, X, ax = None, usefig = False, figsiz
     return ax
 
 def plot_phase(f_range, X, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE, font_size=DEFAULT_FONTSIZE, line_width=DEFAULT_LINEWIDTH,
-    x_units = "Hz", units="rad", plot_type="default", title="Phase angle vs Frequency", legend=[], legend_loc = "upper right"):
+    x_units = "Hz", units="rad", plot_type="default",
+    unwrap = False,
+    title="Phase angle vs Frequency", legend=[], legend_loc = "upper right"):
 
     if usefig and not ax:
         fig, ax = plt.subplots(figsize=figsize)
@@ -95,8 +97,12 @@ def plot_phase(f_range, X, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE,
     if units == "deg":
         y = np.angle(X_amp, deg=True)
         units = "$^{\circ}$"
+        if unwrap:
+            y = np.rad2deg(np.unwrap(np.deg2rad(y)))
     else:
         y = np.angle(X_amp)
+        if unwrap:
+            y = np.unwrap(y)
 
     if x_units == 'rad/sec':
         f_range = 2*np.pi*f_range
