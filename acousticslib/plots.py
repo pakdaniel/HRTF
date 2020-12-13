@@ -62,7 +62,7 @@ def plot_linear_spectrum_amplitude(f_range, X, ax = None, usefig = False, figsiz
     X_amp = np.atleast_2d(abs(X))
 
     if units == "dB":
-        X_amp = acousticmag2db(X_amp/max(X_amp))
+        X_amp = acousticmag2db(X_amp/np.max(X_amp))
 
     if x_units == 'rad/sec':
         f_range = 2*np.pi*f_range
@@ -139,7 +139,7 @@ def plot_linear_spectrum(f_range, X, ax = None, usefig = False, figsize = DEFAUL
     X = np.atleast_2d(X)
 
     if units == "dB":
-        X = acousticmag2db(X/max(X))
+        X = acousticmag2db(X/np.max(X))
 
     if x_units == 'rad/sec':
         f_range = 2*np.pi*f_range
