@@ -7,7 +7,7 @@ from matplotlib.ticker import FuncFormatter
 
 DEFAULT_WIDTH = 15
 DEFAULT_HEIGHT = 5
-DEFAULT_FONTSIZE = 14
+DEFAULT_FONTSIZE = 25
 DEFAULT_LINEWIDTH = 2
 DEFAULT_FIGSIZE = (DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
@@ -92,14 +92,18 @@ def plot_phase(f_range, X, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE,
 
     X_amp = np.atleast_2d(X)
 
-    if units == "dB":
-        X_amp = acousticmag2db(X_amp/max(X_amp))
+    if units == "deg":
+        y = np.angle(X_amp, deg=True)
+    else:
+        y = np.angle(X_amp)
 
     if x_units == 'rad/sec':
         f_range = 2*np.pi*f_range
+    elif x_units == 'deg/sec':
+        f_range = 360*f_range
 
 
-    plot(np.atleast_2d(f_range).T, np.angle(X_amp).T, linewidth = line_width)
+    plot(np.atleast_2d(f_range).T, y.T, linewidth = line_width)
 
     if title:
         ax.title(title, {"fontsize": font_size})
