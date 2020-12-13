@@ -11,6 +11,9 @@ DEFAULT_FONTSIZE = 14
 DEFAULT_LINEWIDTH = 2
 DEFAULT_FIGSIZE = (DEFAULT_WIDTH, DEFAULT_HEIGHT)
 
+def update_plotting_params(params):
+    plt.rcParams.update(params)
+
 def _get_plot_func(plot_type, ax):
     if plot_type == "default":
         plotfunc = ax.plot
