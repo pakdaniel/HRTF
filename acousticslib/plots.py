@@ -32,16 +32,18 @@ def plot_time_series(t_range, x, ax = None, usefig = False, figsize = DEFAULT_FI
 
     
     plot(np.atleast_2d(t_range).T, np.atleast_2d(x).T, linewidth = line_width)
-    plt.title(title, {"fontsize": font_size})
 
-    plt.xlabel('Time (s)', fontsize=font_size)
-    plt.ylabel('Amplitude ({})'.format(units), fontsize=font_size)
-    plt.xlim([t_range[0], t_range[-1]])
-    plt.xticks(fontsize=font_size)
-    plt.grid(True, which='both')
+    if title:
+        ax.title(title, {"fontsize": font_size})
+
+    ax.set_xlabel('Time (s)', fontsize=font_size)
+    ax.set_ylabel('Amplitude ({})'.format(units), fontsize=font_size)
+    ax.set_xlim([t_range[0], t_range[-1]])
+    ax.tick_params(labelsize=font_size)
+    ax.grid(True, which='both')
 
     if legend:
-        plt.legend(legend, loc=legend_loc)
+        ax.legend(legend, loc=legend_loc)
 
     return ax
 
@@ -63,15 +65,16 @@ def plot_linear_spectrum_amplitude(f_range, X, ax = None, usefig = False, figsiz
         f_range = 2*np.pi*f_range
 
     plot(np.atleast_2d(f_range).T, X_amp.T, linewidth = line_width)
-    plt.title(title, {"fontsize": font_size})
-    plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
-    plt.ylabel('Absolute Amplitude ({})'.format(units), fontsize=font_size)
-    plt.xlim([f_range[0], f_range[-1]])
-    plt.xticks(fontsize=font_size)
-    plt.grid(True, which='both')
+    if title:
+        ax.title(title, {"fontsize": font_size})
+    ax.set_xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
+    ax.set_ylabel('Absolute Amplitude ({})'.format(units), fontsize=font_size)
+    ax.set_xlim([f_range[0], f_range[-1]])
+    ax.tick_params(labelsize=font_size)
+    ax.grid(True, which='both')
 
     if legend:
-        plt.legend(legend, loc=legend_loc)
+        ax.legend(legend, loc=legend_loc)
 
     return ax
 
@@ -94,15 +97,17 @@ def plot_phase(f_range, X, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE,
 
 
     plot(np.atleast_2d(f_range).T, np.angle(X_amp).T, linewidth = line_width)
-    plt.title(title, {"fontsize": font_size})
-    plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
-    plt.ylabel('Phase Angle ({})'.format(units), fontsize=font_size)
-    plt.xlim([f_range[0], f_range[-1]])
-    plt.xticks(fontsize=font_size)
-    plt.grid(True, which='both')
+
+    if title:
+        ax.title(title, {"fontsize": font_size})
+    ax.set_xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
+    ax.set_ylabel('Phase Angle ({})'.format(units), fontsize=font_size)
+    ax.set_xlim([f_range[0], f_range[-1]])
+    ax.tick_params(labelsize=font_size)
+    ax.grid(True, which='both')
 
     if legend:
-        plt.legend(legend, loc=legend_loc)
+        ax.legend(legend, loc=legend_loc)
 
     return ax
 
@@ -126,15 +131,16 @@ def plot_linear_spectrum(f_range, X, ax = None, usefig = False, figsize = DEFAUL
 
     
     plot(np.atleast_2d(f_range).T, X.T, linewidth = line_width)
-    plt.title(title, {"fontsize": font_size})
-    plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
-    plt.ylabel('Real-valued Amplitude ({})'.format(units), fontsize=font_size)
-    plt.xlim([f_range[0], f_range[-1]])
-    plt.xticks(fontsize=font_size)
-    plt.grid(True, which='both')
+    if title:
+        ax.title(title, {"fontsize": font_size})
+    ax.set_xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
+    ax.set_ylabel('Real-valued Amplitude ({})'.format(units), fontsize=font_size)
+    ax.set_xlim([f_range[0], f_range[-1]])
+    ax.tick_params(labelsize=font_size)
+    ax.grid(True, which='both')
 
     if legend:
-        plt.legend(legend, loc=legend_loc)
+        ax.legend(legend, loc=legend_loc)
 
     return ax
 
@@ -155,15 +161,17 @@ def plot_gxx(Gxx_f_range, Gxx, ax = None, usefig = False, figsize = DEFAULT_FIGS
 
     
     plot(np.atleast_2d(Gxx_f_range).T, Gxx.T, linewidth = line_width)
-    plt.title(title, {"fontsize": font_size})
-    plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
-    plt.ylabel('Power ({})'.format(units), fontsize=font_size)
-    plt.xlim([Gxx_f_range[0], Gxx_f_range[-1]])
-    plt.xticks(fontsize=font_size)
-    plt.grid(True, which='both')
+
+    if title:
+        ax.title(title, {"fontsize": font_size})
+    ax.set_xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
+    ax.set_ylabel('Power ({})'.format(units), fontsize=font_size)
+    ax.set_xlim([Gxx_f_range[0], Gxx_f_range[-1]])
+    ax.tick_params(labelsize=font_size)
+    ax.grid(True, which='both')
 
     if legend:
-        plt.legend(legend, loc=legend_loc)
+        ax.legend(legend, loc=legend_loc)
 
     return ax
 
@@ -184,15 +192,17 @@ def plot_sxx(f_range, Sxx, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE,
     plot = _get_plot_func(plot_type, ax)
     
     plot(np.atleast_2d(f_range).T, Sxx.T, linewidth = line_width)
-    plt.title(title, {"fontsize": font_size})
-    plt.xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
-    plt.ylabel('Power ({})'.format(units), fontsize=font_size)
-    plt.xlim([f_range[0], f_range[-1]])
+
+    if title:
+        ax.title(title, {"fontsize": font_size})
+    ax.set_xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
+    ax.set_ylabel('Power ({})'.format(units), fontsize=font_size)
+    ax.set_xlim([f_range[0], f_range[-1]])
     plt.xticks(fontsize=font_size)
-    plt.grid(True, which='both')
+    ax.grid(True, which='both')
 
     if legend:
-        plt.legend(legend, loc=legend_loc)
+        ax.legend(legend, loc=legend_loc)
 
     return ax
 
@@ -244,7 +254,9 @@ def plot_spectrogram(x, dt, record_length = 0, num_bins = 0, percent_overlap = 0
         units = 'wu$^2$/Hz'
     fig = plt.figure(figsize=figsize)
     h = plt.imshow(spectrogram_matrix, cmap="jet", origin="lower", extent=[0, end_time, 0, binned_Gxx_f_range[-1]], aspect="auto")
-    plt.title("{} ({} records, {} samples/record), {}% Overlap".format(title, num_bins, record_length, percent_overlap), {"fontsize": font_size})
+
+    if title:
+        plt.title("{} ({} records, {} samples/record), {}% Overlap".format(title, num_bins, record_length, percent_overlap), {"fontsize": font_size})
     cbar = fig.colorbar(h)
     cbar.set_label("Magnitude ({})".format(units))
     cbar.ax.tick_params(labelsize=font_size)
