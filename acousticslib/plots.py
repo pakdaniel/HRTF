@@ -37,7 +37,7 @@ def plot_time_series(t_range, x, ax = None, usefig = False, figsize = DEFAULT_FI
     plot(np.atleast_2d(t_range).T, np.atleast_2d(x).T, linewidth = line_width)
 
     if title:
-        ax.title(title, {"fontsize": font_size})
+        ax.set_title(title, {"fontsize": font_size})
 
     ax.set_xlabel('Time (s)', fontsize=font_size)
     ax.set_ylabel('Amplitude ({})'.format(units), fontsize=font_size)
@@ -69,7 +69,7 @@ def plot_linear_spectrum_amplitude(f_range, X, ax = None, usefig = False, figsiz
 
     plot(np.atleast_2d(f_range).T, X_amp.T, linewidth = line_width)
     if title:
-        ax.title(title, {"fontsize": font_size})
+        ax.set_title(title, {"fontsize": font_size})
     ax.set_xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     ax.set_ylabel('Absolute Amplitude ({})'.format(units), fontsize=font_size)
     ax.set_xlim([f_range[0], f_range[-1]])
@@ -114,7 +114,7 @@ def plot_phase(f_range, X, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE,
     plot(np.atleast_2d(f_range).T, y.T, linewidth = line_width)
 
     if title:
-        ax.title(title, {"fontsize": font_size})
+        ax.set_title(title, {"fontsize": font_size})
     ax.set_xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     ax.set_ylabel('Phase Angle ({})'.format(units), fontsize=font_size)
     ax.set_xlim([f_range[0], f_range[-1]])
@@ -147,7 +147,7 @@ def plot_linear_spectrum(f_range, X, ax = None, usefig = False, figsize = DEFAUL
     
     plot(np.atleast_2d(f_range).T, X.T, linewidth = line_width)
     if title:
-        ax.title(title, {"fontsize": font_size})
+        ax.set_title(title, {"fontsize": font_size})
     ax.set_xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     ax.set_ylabel('Real-valued Amplitude ({})'.format(units), fontsize=font_size)
     ax.set_xlim([f_range[0], f_range[-1]])
@@ -178,7 +178,7 @@ def plot_gxx(Gxx_f_range, Gxx, ax = None, usefig = False, figsize = DEFAULT_FIGS
     plot(np.atleast_2d(Gxx_f_range).T, Gxx.T, linewidth = line_width)
 
     if title:
-        ax.title(title, {"fontsize": font_size})
+        ax.set_title(title, {"fontsize": font_size})
     ax.set_xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     ax.set_ylabel('Power ({})'.format(units), fontsize=font_size)
     ax.set_xlim([Gxx_f_range[0], Gxx_f_range[-1]])
@@ -209,7 +209,7 @@ def plot_sxx(f_range, Sxx, ax = None, usefig = False, figsize = DEFAULT_FIGSIZE,
     plot(np.atleast_2d(f_range).T, Sxx.T, linewidth = line_width)
 
     if title:
-        ax.title(title, {"fontsize": font_size})
+        ax.set_title(title, {"fontsize": font_size})
     ax.set_xlabel('Frequency ({})'.format(x_units), fontsize=font_size)
     ax.set_ylabel('Power ({})'.format(units), fontsize=font_size)
     ax.set_xlim([f_range[0], f_range[-1]])
