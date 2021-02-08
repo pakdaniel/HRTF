@@ -31,8 +31,7 @@ class Model:
     if verbose:
       self.model.summary()
     
-  def fit(self, X_train, y_train, X_val, y_val, num_epochs = 50, verbose=0, save_weights = False, weights_dir = None):
-    callbacks = []
+  def fit(self, X_train, y_train, X_val, y_val, num_epochs = 50, verbose=0, save_weights = False, weights_dir = None, callbacks = []):
     
     if save_weights:
       if not (weights_dir):
@@ -54,14 +53,18 @@ class Model:
   
   def predict(self, *args, **kwargs):
     return self.model.predict(*args, **kwargs)
+
   def load_weights(self, *args, **kwargs):
     self.model.load_weights(*args, **kwargs)
+
   def save_weights(self, *args, **kwargs):
     self.model.save_weights(*args, **kwargs)
+
   def load_model(self, model_path):
     with open(model_path, "r") as json_file:
       model_json = json_file.read()
     self.model = keras.models.model_from_json(model_json)
+    
   def save_model(self, model_path):
     model_json = self.model.to_json()
     with open(model_path, "w") as json_file:
