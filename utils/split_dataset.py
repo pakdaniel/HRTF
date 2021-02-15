@@ -1,5 +1,5 @@
 import numpy as np
-from ..acousticslib.domain_conversions import *
+from acousticslib.domain_conversions import *
 
 
 def split_dataset(dataset, observer_of_interest = 0, positions_of_interest = [(0,0)], channel = "left", input_type="HRIR", cut_after_samples = 127):
