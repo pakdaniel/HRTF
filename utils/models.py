@@ -36,12 +36,15 @@ class Model:
     if save_weights:
       if not (weights_dir):
         raise ValueError("Output directory must be specified to save weights")
-      callbacks.append(
-        keras.callbacks.ModelCheckpoint(os.path.join(weights_dir, "{}-weights.h5".format(self.model_name)),
-            monitor="val_loss",
-            save_best_only=True,
-            verbose=1)
-        )
+      if not any([type(callback) == keras.callbacks.ModelCheckpoint for callback in callbacks]):
+        callbacks.append(
+          keras.callbacks.ModelCheckpoint(os.path.join(weights_dir, "{}-weights.h5".format(self.model_name)),
+              monitor="val_loss",
+              save_best_only=True,
+              verbose=1)
+          )
+      else:
+        print("Using the model checkpoint passed in rather than the default")
 
     self.log = self.model.fit(
         X_train, y_train,

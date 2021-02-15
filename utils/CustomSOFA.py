@@ -84,4 +84,6 @@ class SOFA:
         return outputs
 
     def get_indices_of_locations(self, locations):
+        if type(locations) == tuple and len(locations) == 2:
+            locations = [locations]
         return np.where(np.logical_or.reduce([np.all(self.Source["Position"][:, :2] == np.array([azimuth, elevation]), axis=1) for azimuth, elevation in locations]) == True)[0]
