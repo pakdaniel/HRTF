@@ -1,6 +1,6 @@
 from math import floor
 from numpy import zeros
-from acousticslib.domain_conversions import *
+from .domain_conversions import *
 
 def gxx_average(x, dt, num_bins):
 

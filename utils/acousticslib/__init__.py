@@ -1,11 +1,5 @@
-from acousticslib.parseval_sum_check import parseval_sum_check
-from acousticslib.gxx_average import gxx_average
-from acousticslib.generate_excitation import generate_excitation
-from acousticslib.hann_fades import hann_fades
-from acousticslib.sound_pressure_level import sound_pressure_level
-
-import acousticslib.plots
-import acousticslib.unit_conversions
-import acousticslib.domain_conversions
-import acousticslib.sweeps
-import acousticslib.filters
+from .parseval_sum_check import parseval_sum_check
+from .gxx_average import gxx_average
+from .generate_excitation import generate_excitation
+from .hann_fades import hann_fades
+from .sound_pressure_level import sound_pressure_level
