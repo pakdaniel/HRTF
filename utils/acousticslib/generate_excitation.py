@@ -1,8 +1,8 @@
 import numpy as np
 from numpy.matlib import repmat
-from acousticslib.sweeps import lin_sine_sweep, log_sine_sweep
+from .sweeps import lin_sine_sweep, log_sine_sweep
 from math import ceil
-from acousticslib.domain_conversions import linearspectrum2timeseries
+from .domain_conversions import linearspectrum2timeseries
 
 def generate_excitation(record_length, pulse_time, num_records, excitation_type, sampling_frequency,
     sin_freq = 0,
