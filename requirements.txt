@@ -12,3 +12,4 @@ matplotlib==3.2.2
 pysofaconventions==0.1.5
 numpy==1.19.5
 scipy==1.4.1
+scikit-learn==0.22.2.post1

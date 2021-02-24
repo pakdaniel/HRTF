@@ -1,5 +1,8 @@
 import numpy as np
 from utils.acousticslib.domain_conversions import *
+from sklearn.model_selection import train_test_split
+
+# Just do the left, and we will just mirror them across the plane of symmetry afterward (so if there are 3 points we're testing for, this will become 6)
 
 
 def split_dataset(dataset, observer_of_interest = 0, positions_of_interest = [(0,0)], channel = "left", input_type="HRIR", cut_after_samples = 127):
@@ -14,24 +17,29 @@ def split_dataset(dataset, observer_of_interest = 0, positions_of_interest = [(0
   else:
     raise NotImplementedError
 
-  if input_type == "HRIR" or None:
+
+  hrir_train, hrir_test = train_test_split([zip(range(1, len(dataset)+1), dataset)], test_size = 0.8, random_state=31415)
+  hrir_holdout = hrir_train.pop(observer_of_interest)
+  holdout_num = hrir_holdout[0]
+  X_holdout, y_holdout = hrir_holdout[1].split_HRIR_by_locations(positions_of_interest)
+
+  if input_type == "HRIR":
     """
     Creates a training and testing set using just the HRIR information
     """
-
-    hrir_train = dataset.copy()
-    hrir_holdout = hrir_train.pop(observer_of_interest)
-
-    X_test, y_test = hrir_holdout.split_HRIR_by_locations(positions_of_interest)
-    X_test, y_test = X_test[:,channel,:].flatten().reshape((1, X_test.shape[0]*X_test.shape[2])), np.atleast_2d(y_test[:,channel,:].reshape((y_test.shape[0], y_test.shape[2])).flatten())
+    
+    X_holdout, y_holdout = X_holdout[:,channel,:].flatten().reshape((1, X_holdout.shape[0]*X_holdout.shape[2])), np.atleast_2d(y_holdout[:,channel,:].reshape((y_holdout.shape[0], y_holdout.shape[2])).flatten())
     X_train = []
     y_train = []
+    X_test = []
+    y_test = []
 
-    for hrir in hrir_train:
-      c,d = hrir.split_HRIR_by_locations(positions_of_interest)
+    for hrir_set, X_set, y_set in zip([hrir_train, hrir_test], [X_train, X_test], [y_train, y_test]):
+      for _, hrir in hrir_set:
+        c,d = hrir.split_HRIR_by_locations(positions_of_interest)
 
-      X_train.append(c[:, channel, :].flatten())
-      y_train.append(d[:, channel, :].reshape((d.shape[0], d.shape[2])).flatten()) 
+        X_set.append(c[:, channel, :].flatten())
+        y_set.append(d[:, channel, :].reshape((d.shape[0], d.shape[2])).flatten()) 
     
 
   elif "HRTF" in input_type:
@@ -48,77 +56,76 @@ def split_dataset(dataset, observer_of_interest = 0, positions_of_interest = [(0
     The output will contain the magnitude information and the phase information. Phase is from [0, 2pi].
     The arrays will be structured in the format of [All Magnitudes| All Phase]
     """
-    
-    hrir_train = dataset.copy()
-    hrir_holdout = hrir_train.pop(observer_of_interest)
+
     dt = 1/hrir_holdout.SamplingRate
-
-    X_test, y_test = hrir_holdout.split_HRIR_by_locations(positions_of_interest)
-    
-    X_test, freq = ts2ls(X_test[:,channel,:], dt)
+   
+    X_holdout, freq = ts2ls(X_holdout[:,channel,:], dt)
     if input_type == "HRTF Mirror":
-      X_test = X_test[:,127:]
-    X_test_mag = np.abs(X_test)
-    X_test_phase = np.angle(X_test, deg=False) + np.pi
-    X_test_mag = X_test_mag.flatten().reshape(1,X_test_mag.shape[0]*X_test_mag.shape[1])
-    X_test_phase = X_test_phase.flatten().reshape(1,X_test_phase.shape[0]*X_test_phase.shape[1])
-    max_x_test = np.max(np.abs(X_test))
-    min_x_test = np.min(np.abs(X_test))
+      X_holdout = X_holdout[:,127:]
+    X_holdout_mag = np.abs(X_holdout)
+    X_holdout_phase = np.angle(X_holdout, deg=False) + np.pi
+    X_holdout_mag = X_holdout_mag.flatten().reshape(1,X_holdout_mag.shape[0]*X_holdout_mag.shape[1])
+    X_holdout_phase = X_holdout_phase.flatten().reshape(1,X_holdout_phase.shape[0]*X_holdout_phase.shape[1])
+    max_x_test = np.max(np.abs(X_holdout))
+    min_x_test = np.min(np.abs(X_holdout))
 
-    y_test, freq = ts2ls(y_test[:,channel,:], dt)
+    y_holdout, freq = ts2ls(y_holdout[:,channel,:], dt)
     if input_type == "HRTF Mirror":
-      y_test = y_test[:,127:]
-    y_test_mag = np.abs(y_test)
-    y_test_phase = np.angle(y_test, deg=False) + np.pi
-    y_test_mag = y_test_mag.flatten().reshape(1,y_test_mag.shape[0]*y_test_mag.shape[1])
-    y_test_phase = y_test_phase.flatten().reshape(1,y_test_phase.shape[0]*y_test_phase.shape[1])
-    max_y_test = np.max(np.abs(y_test))
-    min_y_test = np.min(np.abs(y_test))
+      y_holdout = y_holdout[:,127:]
+    y_holdout_mag = np.abs(y_holdout)
+    y_holdout_phase = np.angle(y_holdout, deg=False) + np.pi
+    y_holdout_mag = y_holdout_mag.flatten().reshape(1,y_holdout_mag.shape[0]*y_holdout_mag.shape[1])
+    y_holdout_phase = y_holdout_phase.flatten().reshape(1,y_holdout_phase.shape[0]*y_holdout_phase.shape[1])
+    max_y_holdout = np.max(np.abs(y_holdout))
+    min_y_holdout = np.min(np.abs(y_holdout))
 
-    X_test, y_test = np.concatenate((X_test_mag,X_test_phase), axis = 1), np.concatenate((y_test_mag,y_test_phase), axis = 1) 
+    X_holdout, y_holdout = np.concatenate((X_holdout_mag,X_holdout_phase), axis = 1), np.concatenate((y_holdout_mag,y_holdout_phase), axis = 1) 
     X_train = []
     y_train = []
-    max_x_train = 0
-    max_y_train = 0
-    min_x_train = 1
-    min_y_train = 1
+    X_test = []
+    y_test = []
+
     max_c = []
     max_d = []
 
-    for hrir in hrir_train:
+    for hrir_set, X_set, y_set in zip([hrir_train, hrir_test], [X_train, X_test], [y_train, y_test]):
+      for _, hrir in hrir_set:
 
-      c,d = hrir.split_HRIR_by_locations(positions_of_interest)
-      c, freq = ts2ls(c[:, channel, :], dt)
-      if input_type == "HRTF Mirror":
-        c = c[:,127:]
 
-      c_mag = np.abs(c)
-      c_phase = np.angle(c, deg=False) + np.pi
-      c_mag = c_mag.flatten().reshape(1,c_mag.shape[0]*c_mag.shape[1])
-      c_phase = c_phase.flatten().reshape(1,c_phase.shape[0]*c_phase.shape[1])
-      c_new = np.concatenate((c_mag, c_phase), axis = 1)
-      
-      
-      d, freq = ts2ls(d[:, channel, :], dt)
-      if input_type == "HRTF Mirror":
-        d = d[:,127:]
+        c,d = hrir.split_HRIR_by_locations(positions_of_interest)
+        c, freq = ts2ls(c[:, channel, :], dt)
+        if input_type == "HRTF Mirror":
+          c = c[:,127:]
 
-      d_mag = np.abs(d)
-      d_phase = np.angle(d, deg=False) + np.pi
-      d_mag = d_mag.flatten().reshape(1,d_mag.shape[0]*d_mag.shape[1])
-      d_phase = d_phase.flatten().reshape(1,d_phase.shape[0]*d_phase.shape[1])
-      d_new = np.concatenate((d_mag, d_phase), axis = 1)
+        c_mag = np.abs(c)
+        c_phase = np.angle(c, deg=False) + np.pi
+        c_mag = c_mag.flatten().reshape(1,c_mag.shape[0]*c_mag.shape[1])
+        c_phase = c_phase.flatten().reshape(1,c_phase.shape[0]*c_phase.shape[1])
+        c_new = np.concatenate((c_mag, c_phase), axis = 1)
+        
+        
+        d, freq = ts2ls(d[:, channel, :], dt)
+        if input_type == "HRTF Mirror":
+          d = d[:,127:]
 
-      X_train.append(c_new.flatten()) 
-      y_train.append(d_new.flatten()) 
-      max_c.append(c_mag)
-      max_d.append(d_mag)    
+        d_mag = np.abs(d)
+        d_phase = np.angle(d, deg=False) + np.pi
+        d_mag = d_mag.flatten().reshape(1,d_mag.shape[0]*d_mag.shape[1])
+        d_phase = d_phase.flatten().reshape(1,d_phase.shape[0]*d_phase.shape[1])
+        d_new = np.concatenate((d_mag, d_phase), axis = 1)
+
+        X_set.append(c_new.flatten()) 
+        y_set.append(d_new.flatten()) 
+        max_c.append(c_mag)
+        max_d.append(d_mag)    
 
   X_train = np.array(X_train)
   y_train = np.array(y_train)
+  X_test = np.array(X_test)
+  y_test = np.array(y_test)
 
 
-  return X_train, y_train, X_test, y_test
+  return X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num
 
-  #def scale_dataset(X_train, y_train, X_test, y_test):
+  #def scale_dataset(X_train, y_train, X_holdout, y_holdout):
     
