@@ -36,10 +36,10 @@ def grid_search(model = None, hrir_all = None, verbose=0, num_epochs = 100, num_
         print("{}/{}: {}: {:.4f}; Holdout: {}; current best is {} with {:.4f}".format(
             i,
             len(coord_sets),
-            "[" + ", ".join(["({}, {})".format(item[0], item[1]) for item in coord_set]) + "]",
+            "[" + ", ".join(["({}, {})".format(int(item[0]), int(item[1])) for item in coord_set]) + "]",
             loss,
             holdout_num,
-            "[" + ", ".join(["({}, {})".format(item[0], item[1]) for item in best_coord_set]) + "]",
+            "[" + ", ".join(["({}, {})".format(int(item[0]), int(item[1])) for item in best_coord_set]) + "]",
             best_loss
             )
         )
