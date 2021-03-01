@@ -4,7 +4,7 @@ from itertools import combinations
 from numpy import sum
 
 def get_all_combs(positions, num):
-    return combinations(positions[:, :2], num)
+    return list(combinations(positions[:, :2], num))
 
 
 def grid_search(model = None, hrir_all = None, verbose=0, num_epochs = 100, num_positions = 2, notebook = False):
