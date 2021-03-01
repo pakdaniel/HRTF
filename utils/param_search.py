@@ -22,7 +22,7 @@ def grid_search(model = None, hrir_all = None, verbose=0, num_epochs = 100):
         y_predict = model.predict(X_holdout)
         loss = (sum(y_predict - y_holdout)**2)/len(y_predict)
         # loss = model.log.history['loss'][-1]
-        print("{}, {}: {:.4f}; Holdout: {}".format(pair[0], pair[1], loss, holdout_num))
+        print("{}, {}: {:.4f}; Holdout: {}; current best is {} with {:.4f}".format(pair[0], pair[1], loss, holdout_num, best_pair, best_loss))
         if not best_loss:
             best_loss = loss
             best_pair = pair
