@@ -7,7 +7,7 @@ def get_all_pairs(positions):
     return combinations(positions[:, :2], 2)
 
 
-def grid_search(model = None, hrir_all = None):
+def grid_search(model = None, hrir_all = None, verbose=0, num_epochs = 100):
     pairs = get_all_pairs(hrir_all[0].Source["Position"])
     callback = EarlyStopping(monitor='loss', patience=3)
     best_pair = None
@@ -16,7 +16,7 @@ def grid_search(model = None, hrir_all = None):
     for pair in pairs:
         X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(hrir_all, observer_of_interest = 0, positions_of_interest = pair, channel = "left")
         model.compile(optimizer="adam")
-        model.fit(X_train,y_train,X_test,y_test, verbose=1, num_epochs = 100, save_weights=False, callbacks=callback)
+        model.fit(X_train,y_train,X_test,y_test, verbose=verbose, num_epochs = num_epochs, save_weights=False, callbacks=callback)
         y_predict = model.predict(X_holdout)
         loss = (sum(y_predict - y_holdout)**2)/len(y_predict)
         # loss = model.log.history['loss'][-1]
@@ -30,4 +30,4 @@ def grid_search(model = None, hrir_all = None):
         pairs_losses.append((pair, loss))
     
     print(f"Best pair is {best_pair} with {best_loss} loss")
-    return
+    
