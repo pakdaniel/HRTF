@@ -1,8 +1,8 @@
 
-wget https://depositonce.tu-berlin.de/bitstream/11303/9429/3/HRIRs.zip
-wget https://depositonce.tu-berlin.de/bitstream/11303/9429/4/Antrhopometric%20measures.zip
-wget https://depositonce.tu-berlin.de/bitstream/11303/9429/5/HpIRs.zip
-wget https://depositonce.tu-berlin.de/bitstream/11303/9429/6/3D%20head%20meshes.zip
+wget "https://depositonce.tu-berlin.de/bitstream/11303/9429/3/HRIRs.zip"
+wget "https://depositonce.tu-berlin.de/bitstream/11303/9429/4/Antrhopometric%20measures.zip"
+wget "https://depositonce.tu-berlin.de/bitstream/11303/9429/5/HpIRs.zip"
+wget "https://depositonce.tu-berlin.de/bitstream/11303/9429/6/3D%20head%20meshes.zip"
 mkdir HUTUBS
 unzip HRIRs.zip
 unzip HpIRs.zip
