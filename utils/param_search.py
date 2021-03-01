@@ -1,24 +1,13 @@
 from keras.callbacks import EarlyStopping
 from .split_dataset import split_dataset
-from itertools import permutations
+from itertools import combinations
 from numpy import sum
-# 
-
-def add_position(position_pairs, positions, i):
-    
-    list1 = [positions[i]]
-    if i == len(positions-1):
-        return
-    list2 = positions[i+1:]
-    positions.extend([list(zip(each_permutation, list2)) for each_permutation in permutations(list1, len(list2))])
 
 def get_all_pairs(positions):
-    position_pairs = []
-    for i in range(len(positions)):
-        add_position(position_pairs, positions, i)
-    return position_pairs
+    return combinations(positions[:, :2], 2)
 
-def grid_search(model, hrir_all):
+
+def grid_search(model = None, hrir_all = None):
     pairs = get_all_pairs(hrir_all[0].Source["Position"])
     callback = EarlyStopping(monitor='loss', patience=3)
     best_pair = None
@@ -41,3 +30,4 @@ def grid_search(model, hrir_all):
         pairs_losses.append((pair, loss))
     
     print(f"Best pair is {best_pair} with {best_loss} loss")
+    return
