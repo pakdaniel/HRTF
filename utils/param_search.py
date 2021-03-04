@@ -19,7 +19,7 @@ def grid_search(model = None, hrir_all = None, verbose=0, num_epochs = 100, num_
     else:
         from tqdm import tqdm
     
-    for i, coord_set in tqdm(islice(enumerate(coord_sets), start=start_from), total=len(coord_sets)):
+    for i, coord_set in tqdm(islice(enumerate(coord_sets), start_from, None), total=len(coord_sets)):
         X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(hrir_all, observer_of_interest = 0, positions_of_interest = coord_set, channel = "left")
         model.model.set_weights(weights)
         model.fit(X_train,y_train,X_test,y_test, verbose=verbose, num_epochs = num_epochs, save_weights=False, callbacks=callback)
