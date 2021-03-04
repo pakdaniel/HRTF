@@ -43,6 +43,6 @@ def grid_search(model = None, hrir_all = None, verbose=0, num_epochs = 100, num_
             )
         print(message)
         with open(output_file, "at") as filehandle:
-            filehandle.write(message)
+            filehandle.write(f"{message}\n")
 
     print(f"Best coordinate set is {best_coord_set} with {best_loss} loss")
