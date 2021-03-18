@@ -3,8 +3,22 @@ from sklearn.cluster import KMeans
 from itertools import combinations, product
 from keras.callbacks import EarlyStopping
 from utils.split_dataset import split_dataset
+from utils.model import Model
+import tensorflow.keras as keras
 from colorama import init, Fore, Style
 from datetime import datetime 
+
+class HRIRModel(Model):
+  def __init__(self, input_shape, output_shape, model_name = "HRIRModel", load_from=None):
+    Model.__init__(self, input_shape, output_shape, model_name, load_from)
+
+  def initialize_model(self, input_shape, output_shape, model_name):
+    input_layer = keras.layers.Input(shape = input_shape)    
+    x = keras.layers.Dense(input_shape, activation="relu", kernel_initializer="he_uniform")(input_layer)    
+    #x = keras.layers.Dense(input_shape*3, activation="relu", kernel_initializer="he_uniform")(x)
+    #x = keras.layers.Dense(output_shape)(input_layer)
+    x = keras.layers.Dense(output_shape)(x)    
+    self.model = keras.models.Model(input_layer, x, name=model_name)
 
 def sph2cart(coords):
     alpha = coords[0]*(np.pi/180)
@@ -50,7 +64,7 @@ def sections_split(positions, n_sections, phase_shift=0):
   return sections 
 
 
-def gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2, spread=3, output_file = "log.txt", random_state=1):
+def gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2, spread=3, output_file = "log.txt", random_state = 1):
   """
   positions - list of speaker locations. MUST BE IN SPHERICAL!
   n_sections - number of paritions to be made in positions dataset
