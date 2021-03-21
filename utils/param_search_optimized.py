@@ -3,7 +3,7 @@ from sklearn.cluster import KMeans
 from itertools import combinations, product
 from keras.callbacks import EarlyStopping
 from utils.split_dataset import split_dataset
-from utils.model import Model
+from utils.models import Model
 import tensorflow.keras as keras
 from colorama import init, Fore, Style
 from datetime import datetime 
