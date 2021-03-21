@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 # Just do the left, and we will just mirror them across the plane of symmetry afterward (so if there are 3 points we're testing for, this will become 6)
 
 
-def split_dataset(dataset, observer_of_interest = 0, positions_of_interest = [(0,0)], channel = "left", input_type="HRIR", cut_after_samples = 127):
+def split_dataset(dataset, observer_of_interest = 0, positions_of_interest = [(0,0)], channel = "left", input_type="HRIR", cut_after_samples = 127, random_state = 42):
   VALID_INPUT_TYPES = ["HRIR", "HRTF", "HRTF Mirror"]
   if input_type not in VALID_INPUT_TYPES:
     raise ValueError(f"Input type must be one of: {', '.join(VALID_INPUT_TYPES)}")
@@ -18,7 +18,7 @@ def split_dataset(dataset, observer_of_interest = 0, positions_of_interest = [(0
     raise NotImplementedError
 
 
-  hrir_train, hrir_test = train_test_split(list(zip(range(2, len(dataset)+1), dataset)), test_size = 0.8, shuffle=True)
+  hrir_train, hrir_test = train_test_split(list(zip(range(2, len(dataset)+1), dataset)), test_size = 0.8, shuffle=True, random_state = random_state)
   hrir_holdout = hrir_train.pop(observer_of_interest)
   holdout_num = hrir_holdout[0]
   X_holdout, y_holdout = hrir_holdout[1].split_HRIR_by_locations(positions_of_interest)
