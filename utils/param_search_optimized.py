@@ -187,6 +187,7 @@ def gridsearch_optimized(model = None, hrir_all = None, n_sections=4, n_clusters
     #print(e) ####################
     #print(e[0])
     for count_, pair_ in enumerate(e):
+      print(pair_)
       X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(hrir_all, observer_of_interest = 0, positions_of_interest = pair_, channel = "left", random_state = random_state)
       model.model.set_weights(weights)
       model.fit(X_train,y_train,X_test,y_test, verbose=False, num_epochs = 50, save_weights=False, callbacks=callback)
