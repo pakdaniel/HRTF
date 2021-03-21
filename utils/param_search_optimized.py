@@ -126,7 +126,8 @@ def gridsearch_optimized(positions, model = None, hrir_all = None, n_sections=4,
 
     for count, pair in enumerate(comb):
 
-      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(positions, observer_of_interest = 0, positions_of_interest = pair, channel = "left", random_state = random_state)
+      a = split_dataset(positions, observer_of_interest = 0, positions_of_interest = pair, channel = "left", random_state = random_state)
+      print(a)
       model.model.set_weights(weights)
       model.fit(X_train,y_train,X_test,y_test, verbose=False, num_epochs = 50, save_weights=False, callbacks=callback)
       y_predict = model.predict(X_holdout)
