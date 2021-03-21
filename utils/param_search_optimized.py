@@ -125,6 +125,7 @@ def gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2,
     best_loss = None
 
     for count, pair in enumerate(comb):
+      print(comb)
       '''
       This is doing the first pass based off the centroids of each section.
       '''
