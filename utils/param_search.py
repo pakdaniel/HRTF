@@ -1,4 +1,4 @@
-from keras.callbacks import EarlyStopping
+# from keras.callbacks import EarlyStopping
 from .split_dataset import split_dataset
 from itertools import combinations, islice
 from numpy import sum
@@ -45,7 +45,7 @@ def grid_search(model = None, hrir_all = None, coord_sets = None, verbose=0, num
         # loss = model.log.history['loss'][-1]
         write_data = "{},{},{:.4f},{:.4f},{}".format(
             i,
-            "[" + ", ".join(["({}, {})".format(int(item[0]), int(item[1])) for item in coord_set]) + "]",
+            "[" + "_".join(["({}_{})".format(int(item[0]), int(item[1])) for item in coord_set]) + "]",
             loss,
             test_loss,
             holdout_num
