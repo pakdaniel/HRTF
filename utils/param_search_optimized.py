@@ -64,9 +64,8 @@ def sections_split(positions, n_sections, phase_shift=0):
   return sections 
 
 
-def gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2, spread=3, output_file = "log.txt", random_state = 1):
+def gridsearch_optimized(positions, hrir_all = None, n_sections=4, n_clusters=None, iterations=2, spread=3, output_file = "log.txt", random_state = 1):
 
-  hrir_all = positions
   """
   positions - list of speaker locations. MUST BE IN SPHERICAL!
   n_sections - number of paritions to be made in positions dataset
