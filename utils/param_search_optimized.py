@@ -181,6 +181,7 @@ def gridsearch_optimized(model = None, hrir_all = None, n_sections=4, n_clusters
       a = a.tolist()
       a = [tuple(elem[0:2]) for elem in a]
       temp_store.append(a)
+      print(temp_store)
     d = list(product(temp_store[0],temp_store[1]))
     e = [list(i) for i in d]
 
