@@ -87,7 +87,8 @@ def gridsearch_optimized(positions, model = None, hrir_all = None, n_sections=4,
   centers = {}
   closest_points =  {}
 
-
+  model.compile(optimizer="adam")
+  weights = model.model.get_weights()
   '''
   centers - center of each cluster
   closest_points - closest point from positions relative to centers
@@ -125,7 +126,8 @@ def gridsearch_optimized(positions, model = None, hrir_all = None, n_sections=4,
 
     for count, pair in enumerate(comb):
 
-      model.compile(optimizer="adam")
+      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(positions, observer_of_interest = 0, positions_of_interest = coord_set, channel = "left", random_state = random_state)
+      model.model.set_weights(weights)
       model.fit(X_train,y_train,X_test,y_test, verbose=False, num_epochs = 50, save_weights=False, callbacks=callback)
       y_predict = model.predict(X_holdout)
       loss = (np.sum(y_predict - y_holdout)**2)/len(y_predict)
@@ -183,8 +185,8 @@ def gridsearch_optimized(positions, model = None, hrir_all = None, n_sections=4,
     #print(e) ####################
     #print(e[0])
     for count_, pair_ in enumerate(e):
-
-      model.compile(optimizer="adam")
+      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(hrir_all, observer_of_interest = 0, positions_of_interest = coord_set, channel = "left", random_state = random_state)
+      model.model.set_weights(weights)
       model.fit(X_train,y_train,X_test,y_test, verbose=False, num_epochs = 50, save_weights=False, callbacks=callback)
       y_predict = model.predict(X_holdout)
       loss_ = (np.sum(y_predict - y_holdout)**2)/len(y_predict) #why is this elementwise??? it should overall
