@@ -64,7 +64,7 @@ def sections_split(positions, n_sections, phase_shift=0):
   return sections 
 
 
-def gridsearch_optimized(positions, model = None, hrir_all = None, n_sections=4, n_clusters=None, iterations=2, spread=3, output_file = "log.txt", random_state = 1):
+def gridsearch_optimized(model = None, hrir_all = None, n_sections=4, n_clusters=None, iterations=2, spread=3, output_file = "log.txt", random_state = 1):
 
   """
   positions - list of speaker locations. MUST BE IN SPHERICAL!
@@ -74,6 +74,8 @@ def gridsearch_optimized(positions, model = None, hrir_all = None, n_sections=4,
   spread - how many points you want to search for from a centroid that minimizes the Euclidean Distance
   random_state - used for KMeans clustering algorithm, usually will return centroids that are really close when run
   """
+  positions = hrir_all[0].Source["Position"]
+  
   channel = "left" #############
   observer_of_interest = 0 ############
   callback = keras.callbacks.EarlyStopping(monitor='loss', patience=3) ########
