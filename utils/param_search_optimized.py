@@ -82,13 +82,6 @@ def gridsearch_optimized(model = None, hrir_all = None, n_sections=4, n_clusters
 
   sections = sections_split(positions, n_sections)
 
-  predictions = [] #just color 
-  labels = []
-  clusters = []
-
-  centers = {}
-  closest_points =  {}
-
   model.compile(optimizer="adam")
   weights = model.model.get_weights()
   '''
@@ -108,7 +101,6 @@ def gridsearch_optimized(model = None, hrir_all = None, n_sections=4, n_clusters
   for section in sections:
     kmeans = KMeans(n_clusters=n_clusters, copy_x=True, n_jobs=-1, random_state=random_state)
     kmeans.fit(section)
-    prediction = kmeans.predict(section) #just color
     center = kmeans.cluster_centers_
 
     val = []
@@ -184,7 +176,6 @@ def gridsearch_optimized(model = None, hrir_all = None, n_sections=4, n_clusters
       print(temp_store)
     d = list(product(*temp_store))
     e = [list(i) for i in d]
-    print(e)
 
     #print(e) ####################
     #print(e[0])
