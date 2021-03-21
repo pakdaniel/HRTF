@@ -125,8 +125,6 @@ def gridsearch_optimized(positions, model = None, hrir_all = None, n_sections=4,
     best_loss = None
 
     for count, pair in enumerate(comb):
-      print("hi")
-      print(positions)
       
       X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(hrir_all, observer_of_interest = 0, positions_of_interest = pair, channel = "left", random_state = random_state)
       model.model.set_weights(weights)
