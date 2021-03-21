@@ -64,7 +64,7 @@ def sections_split(positions, n_sections, phase_shift=0):
   return sections 
 
 
-ddef gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2, spread=3, output_file = "log.txt", random_state=1):
+def gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2, spread=3, output_file = "log.txt", random_state = 1):
   """
   positions - list of speaker locations. MUST BE IN SPHERICAL!
   n_sections - number of paritions to be made in positions dataset
@@ -126,7 +126,7 @@ ddef gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2
       '''
       This is doing the first pass based off the centroids of each section.
       '''
-      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(hrir_all, observer_of_interest = 0, positions_of_interest = pair, channel = "left")
+      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(positions, observer_of_interest = 0, positions_of_interest = pair, channel = "left")
       model = HRIRModel(X_train.shape[1],y_train.shape[1],model_name="subject_{}_{}_channel_at_{}".format(observer_of_interest, channel, "_and_".join(["{}_{}".format(azimuth, elevation) for azimuth, elevation in pair])))
       model.compile(optimizer="adam")
       model.fit(X_train,y_train,X_test,y_test, verbose=False, num_epochs = 50, save_weights=False, callbacks=callback)
@@ -187,7 +187,7 @@ ddef gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2
     #print(e[0])
     for count_, pair_ in enumerate(e):
 
-      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(hrir_all, observer_of_interest = 0, positions_of_interest = pair_, channel = "left")
+      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(positions, observer_of_interest = 0, positions_of_interest = pair_, channel = "left")
       model = HRIRModel(X_train.shape[1],y_train.shape[1],model_name="subject_{}_{}_channel_at_{}".format(observer_of_interest, channel, "_and_".join(["{}_{}".format(azimuth, elevation) for azimuth, elevation in pair])))
       model.compile(optimizer="adam")
       model.fit(X_train,y_train,X_test,y_test, verbose=False, num_epochs = 50, save_weights=False, callbacks=callback)
