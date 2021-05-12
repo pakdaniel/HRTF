@@ -18,7 +18,7 @@ def split_dataset(dataset, observer_of_interest = 0, positions_of_interest = [(0
     raise NotImplementedError
 
 
-  hrir_train, hrir_test = train_test_split(list(zip(range(2, len(dataset)+1), dataset)), test_size = 0.8, shuffle=True, random_state = random_state)
+  hrir_train, hrir_test = train_test_split(list(zip(range(2, len(dataset)+1), dataset)), test_size = 0.2, shuffle=True, random_state = random_state)
   hrir_holdout = hrir_train.pop(observer_of_interest)
   holdout_num = hrir_holdout[0]
   X_holdout, y_holdout = hrir_holdout[1].split_HRIR_by_locations(positions_of_interest)
