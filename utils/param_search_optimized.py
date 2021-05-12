@@ -3,22 +3,10 @@ from sklearn.cluster import KMeans
 from itertools import combinations, product
 from keras.callbacks import EarlyStopping
 from utils.split_dataset import split_dataset
-from utils.model import Model
+from utils.models import Model
 import tensorflow.keras as keras
 from colorama import init, Fore, Style
 from datetime import datetime 
-
-class HRIRModel(Model):
-  def __init__(self, input_shape, output_shape, model_name = "HRIRModel", load_from=None):
-    Model.__init__(self, input_shape, output_shape, model_name, load_from)
-
-  def initialize_model(self, input_shape, output_shape, model_name):
-    input_layer = keras.layers.Input(shape = input_shape)    
-    x = keras.layers.Dense(input_shape, activation="relu", kernel_initializer="he_uniform")(input_layer)    
-    #x = keras.layers.Dense(input_shape*3, activation="relu", kernel_initializer="he_uniform")(x)
-    #x = keras.layers.Dense(output_shape)(input_layer)
-    x = keras.layers.Dense(output_shape)(x)    
-    self.model = keras.models.Model(input_layer, x, name=model_name)
 
 def sph2cart(coords):
     alpha = coords[0]*(np.pi/180)
@@ -64,7 +52,8 @@ def sections_split(positions, n_sections, phase_shift=0):
   return sections 
 
 
-def gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2, spread=3, output_file = "log.txt", random_state = 1):
+def gridsearch_optimized(model = None, hrir_all = None, n_sections=4, n_clusters=None, iterations=2, spread=3, output_file = "log.txt", random_state = 1):
+
   """
   positions - list of speaker locations. MUST BE IN SPHERICAL!
   n_sections - number of paritions to be made in positions dataset
@@ -73,20 +62,16 @@ def gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2,
   spread - how many points you want to search for from a centroid that minimizes the Euclidean Distance
   random_state - used for KMeans clustering algorithm, usually will return centroids that are really close when run
   """
+  positions = hrir_all[0].Source["Position"]
+  
   channel = "left" #############
   observer_of_interest = 0 ############
   callback = keras.callbacks.EarlyStopping(monitor='loss', patience=3) ########
 
   sections = sections_split(positions, n_sections)
 
-  predictions = [] #just color 
-  labels = []
-  clusters = []
-
-  centers = {}
-  closest_points =  {}
-
-
+  model.compile(optimizer="adam")
+  weights = model.model.get_weights()
   '''
   centers - center of each cluster
   closest_points - closest point from positions relative to centers
@@ -104,7 +89,6 @@ def gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2,
   for section in sections:
     kmeans = KMeans(n_clusters=n_clusters, copy_x=True, n_jobs=-1, random_state=random_state)
     kmeans.fit(section)
-    prediction = kmeans.predict(section) #just color
     center = kmeans.cluster_centers_
 
     val = []
@@ -123,12 +107,9 @@ def gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2,
     best_loss = None
 
     for count, pair in enumerate(comb):
-      '''
-      This is doing the first pass based off the centroids of each section.
-      '''
-      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(positions, observer_of_interest = 0, positions_of_interest = pair, channel = "left")
-      model = HRIRModel(X_train.shape[1],y_train.shape[1],model_name="subject_{}_{}_channel_at_{}".format(observer_of_interest, channel, "_and_".join(["{}_{}".format(azimuth, elevation) for azimuth, elevation in pair])))
-      model.compile(optimizer="adam")
+      
+      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(hrir_all, observer_of_interest = 0, positions_of_interest = pair, channel = "left", random_state = random_state)
+      model.model.set_weights(weights)
       model.fit(X_train,y_train,X_test,y_test, verbose=False, num_epochs = 50, save_weights=False, callbacks=callback)
       y_predict = model.predict(X_holdout)
       loss = (np.sum(y_predict - y_holdout)**2)/len(y_predict)
@@ -180,16 +161,16 @@ def gridsearch_optimized(positions, n_sections=4, n_clusters=None, iterations=2,
       a = a.tolist()
       a = [tuple(elem[0:2]) for elem in a]
       temp_store.append(a)
-    d = list(product(temp_store[0],temp_store[1]))
+      print(temp_store)
+    d = list(product(*temp_store))
     e = [list(i) for i in d]
 
     #print(e) ####################
     #print(e[0])
     for count_, pair_ in enumerate(e):
-
-      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(positions, observer_of_interest = 0, positions_of_interest = pair_, channel = "left")
-      model = HRIRModel(X_train.shape[1],y_train.shape[1],model_name="subject_{}_{}_channel_at_{}".format(observer_of_interest, channel, "_and_".join(["{}_{}".format(azimuth, elevation) for azimuth, elevation in pair])))
-      model.compile(optimizer="adam")
+      print(pair_)
+      X_train, y_train, X_holdout, y_holdout, X_test, y_test, holdout_num = split_dataset(hrir_all, observer_of_interest = 0, positions_of_interest = pair_, channel = "left", random_state = random_state)
+      model.model.set_weights(weights)
       model.fit(X_train,y_train,X_test,y_test, verbose=False, num_epochs = 50, save_weights=False, callbacks=callback)
       y_predict = model.predict(X_holdout)
       loss_ = (np.sum(y_predict - y_holdout)**2)/len(y_predict) #why is this elementwise??? it should overall
